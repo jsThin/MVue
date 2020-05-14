@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <p id="name"></p>
+    </div>
+    <script>
+        let obj = {}
+        Object.defineProperty(obj,'name', {
+            get() {
+                console.log('get被触发');
+                return document.querySelector('#name').innerHTML
+            },
+            set(val) {
+                console.log('set被触发');
+                document.querySelector('#name').innerHTML = val
+            }
+        })
+        obj.name = 'jsthin'
+        console.log(obj.name);
+    </script>
+</body>
+</html>
