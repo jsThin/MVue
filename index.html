@@ -6,19 +6,42 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="app">
+        <p>{{name}}</p>
+        <p v-text="name"> </p>
+        <p>{{age}}</p>
+        <p>
+            {{doubleAge}}
+        </p>
+        <input type="text" text v-model="name">
+        <button @click="changeName">哈哈</button>
+        <div v-html="html"></div>
+    </div>
+    <script src="compile.js"></script>
     <script src="Mvue.js"></script>
     <script>
         let app = new Mvue({
+            el: '#app',
             data: {
-                test: 'this is a test',
-                foo: {
-                    bar: 'bar'
-                }
+                name: 'i am test',
+                age: 12,
+                html: '<button>这是一个按钮</button>'
+            },
+            created() {
+                console.log('开始啦')
+                setTimeout(() => {
+                    this.name = '我是蜗牛'
+                }, 1500);
+            },
+            methods: {
+                changeName() {
+                    this.name = 'jsthin'
+                    this.age = 27
+                    this.id = 'xx'
+                    console.log(1,this)
+                } 
             }
         })
-        console.log(app._data.test);
-        app._data.test = 'i am test'
-        app._data.foo.bar = 'lee'
     </script>
 </body>
 </html>

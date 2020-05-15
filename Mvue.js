@@ -6,10 +6,12 @@
 class Mvue {
     constructor(options) {
         this._options = options
-        this._data = options.data
-        this.observer(this._data)      //调用观察者方法
+        this.$data = options.data
+        this.observer(this.$data)      //调用观察者方法
 
-        new Watcher()
+        // new Watcher()
+        // 编译模板
+        new Compile(options.el,this)
     }
     observer(value) {
         // 判断数据是否存在且正确
@@ -28,7 +30,7 @@ class Mvue {
         this.observer(val)      //递归处理嵌套数据
         Object.defineProperty(obj,key,{
             get() {
-                dep.addDep(Dep.target)
+                Dep.target && dep.addDep(Dep.target)
                 return val
             },
             set(newVal) {
@@ -36,13 +38,14 @@ class Mvue {
                     return
                 }
                 val = newVal
-                // console.log(`${key} 属性的值更改为 ${val}`);
+                // 更新数据，
                 dep.notify()
             }
         })
     }
 }
 
+// 依赖收集器，一个data属性对应一个依赖收集器
 class Dep {
     constructor() {
         // 存储所有依赖
@@ -60,6 +63,7 @@ class Dep {
     }
 }
 
+// 依赖，data的属性出现多少次，就会创建多少个依赖，比如name使用了2次，那么那么对应的dep中会有两个watcher
 class Watcher {
     constructor() {
         // 在new一个监听器对象时，将该对象赋值给Dep.target，在get中会用到
