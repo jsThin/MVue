@@ -14,7 +14,7 @@
             {{doubleAge}}
         </p>
         <input type="text" text v-model="name">
-        <button @click="changeName">哈哈</button>
+        <p><button @click="changeName">哈哈</button></p>
         <div v-html="html"></div>
     </div>
     <script src="compile.js"></script>
@@ -25,7 +25,7 @@
             data: {
                 name: 'i am test',
                 age: 12,
-                html: '<button>这是一个按钮</button>'
+                html: '<button @click="buttonhandle">这是一个按钮</button>'
             },
             created() {
                 console.log('开始啦')
@@ -39,6 +39,9 @@
                     this.age = 27
                     this.id = 'xx'
                     console.log(1,this)
+                },
+                buttonhandle() {
+                    console.log('我被点击了')
                 } 
             }
         })

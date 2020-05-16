@@ -5,13 +5,18 @@
 
 class Mvue {
     constructor(options) {
-        this._options = options
+        this.$options = options
         this.$data = options.data
         this.observer(this.$data)      //调用观察者方法
 
         // new Watcher()
         // 编译模板
         new Compile(options.el,this)
+
+        // 执行钩子函数
+        if(options.created) {
+            options.created.call(this)
+        }
     }
     observer(value) {
         // 判断数据是否存在且正确
@@ -21,6 +26,8 @@ class Mvue {
         // 数据正确则开始劫持数据
         Object.keys(value).forEach(key => {
             this.defineReactive(value,key,value[key])
+            // 代理data中的属性到vue实例上
+            this.proxyData(key)
         })
     }
     defineReactive(obj,key,val) {
@@ -40,6 +47,16 @@ class Mvue {
                 val = newVal
                 // 更新数据，
                 dep.notify()
+            }
+        })
+    }
+    proxyData(key) {
+        Object.defineProperty(this,key,{
+            get() {
+                return this.$data[key]
+            },
+            set(newValue) {
+                this.$data[key] = newValue
             }
         })
     }
@@ -65,14 +82,20 @@ class Dep {
 
 // 依赖，data的属性出现多少次，就会创建多少个依赖，比如name使用了2次，那么那么对应的dep中会有两个watcher
 class Watcher {
-    constructor() {
+    constructor(vm,key,callback) {
+        this.vm = vm
+        this.key = key
+        this.callback = callback
         // 在new一个监听器对象时，将该对象赋值给Dep.target，在get中会用到
         Dep.target = this
+        // 应用一次该属性，触发getter，添加依赖
+        this.vm[this.key]
+        Dep.target = null
     }
 
     // 视图更新
     update() {
-        console.log('视图更新了~~~~');
+        this.callback.call(this.vm,this.vm[this.key])
     }
 }
 
